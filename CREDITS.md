@@ -19,6 +19,8 @@ Author: Joe Scylla <joe.scylla@gmail.com>
 JSmin
 -----
 
+Website: http://code.google.com/p/jsmin-php/
+
 JSMin is a filter which removes comments and unnecessary whitespace from
 JavaScript files. It typically reduces filesize by half, resulting in faster
 downloads. It also encourages a more expressive programming style because it
