@@ -1,0 +1,2 @@
+# Static media optimization
+

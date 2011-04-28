@@ -10,13 +10,13 @@ return array
 	(
 		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR,
 		'driver' => 'Media_Javascript',
-		'types'  => array('js'),
+		'type'   => array('js'),
 		'min'    => TRUE,
 		'merge'  => TRUE,
 		'cache'  => Kohana::$caching
 	),
 
-	// Javascript processing
+	// Css processing
 	'css' => array
 	(
 		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR,
