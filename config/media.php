@@ -9,8 +9,7 @@ return array
 	'js' => array
 	(
 		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR,
-		'driver' => 'Media_Javascript',
-		'type'   => array('js'),
+		'type'   => 'js',
 		'min'    => TRUE,
 		'merge'  => TRUE,
 		'cache'  => Kohana::$caching
@@ -20,8 +19,7 @@ return array
 	'css' => array
 	(
 		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR,
-		'driver' => 'Media_Css',
-		'types'  => array('css'),
+		'types'  => 'css',
 		'min'    => TRUE,
 		'merge'  => TRUE,
 		'cache'  => Kohana::$caching

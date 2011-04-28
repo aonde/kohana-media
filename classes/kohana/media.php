@@ -68,15 +68,26 @@ class Kohana_Media {
 
 		if ( ! isset($config[$name]))
 		{
-			throw new Kohana_Exception('Couldn\'t find configuration for environment :name; check configuration file :file', array(
+			throw new Kohana_Exception('Couldn\'t find configuration for environment :environment; check configuration file :file', array(
 				':environment' => $name,
 				':file'        => 'media'.EXT
 			));
 		}
 
-		$config = $config[$name];
+		$config   = $config[$name];
 
-		return new $config['driver']($name, $config);
+		$class    = 'Media_'.UTF8::ucfirst($name);
+		$filename = UTF8::str_ireplace('_', DIRECTORY_SEPARATOR, UTF8::strtolower($name));
+
+		if ( ! (Kohana::find_file('classes', 'media'.DIRECTORY_SEPARATOR.$filename)))
+		{
+			throw new Kohana_Exception('Couldn\'t find media driver :class for environment :environment', array(
+				':environment' => $name,
+				':class'       => $class
+			));
+		}
+
+		return new $class($name, $config);
 	}
 
 	/**

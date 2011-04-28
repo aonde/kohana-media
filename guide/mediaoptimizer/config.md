@@ -6,7 +6,6 @@ Configuration file contains an array of configuration groups. The structure of e
 
     string INSTANCE_NAME => array(
         'path'   => string MEDIA_STORAGE_PATH,
-        'driver' => string OBJECT_DRIVER_NAME,
         'type'   => string ALLOWED_FILE_EXTENSION,
         'min'    => boolean MEDIA_FILE_MINIMIZATION,
         'merge'  => boolean MEDIA_FILE_MERGING,
@@ -20,9 +19,6 @@ INSTANCE_NAME
 
 MEDIA_STORAGE_PATH
 :  Path to the folder, that store all static content of that type. For example, `APPPATH.media/js/`. It's very important that at the end of this parameter was `DIRECTORY_SEPARATOR`.
-
-OBJECT_DRIVER_NAME
-:  Specific driver name for media files processing.
 
 ALLOWED_FILE_EXTENSION
 :  Extension of allowed file types.
