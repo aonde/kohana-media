@@ -281,7 +281,7 @@ class Kohana_Media {
 	protected function _save($file, $data)
 	{
 		// If caching is off - don't save minified data
-		if ( ! Kohana::$caching)
+		if ( ! Kohana::$caching OR ! $this->_config['cache'])
 		{
 			return;
 		}
