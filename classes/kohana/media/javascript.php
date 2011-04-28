@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
-class Kohana_Media_Javascript extends Media_Minifier {
+class Kohana_Media_Javascript extends Media {
 
 	private $_jsmin = FALSE;
 
