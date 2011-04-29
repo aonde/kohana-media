@@ -26,9 +26,6 @@ class Controller_Media extends Controller {
 
 		$media = Media::instance($environment);
 
-		// Check if the browser sent an "if-none-match: <etag>" header, and tell if the file hasn't changed
-		//$this->response->check_cache(sha1($this->request->uri()).$media->filemtime(), $this->request);
-
 		// Set the proper headers to allow caching
 		$this->response->headers('content-type', File::mime_by_ext(pathinfo($file, PATHINFO_EXTENSION)));
 
