@@ -168,6 +168,12 @@ class Kohana_Media {
 
 		foreach ($files as $file => $attributes)
 		{
+			if (is_file(DOCROOT.$file) AND
+				filemtime($file) < $this->_mtimes[$file])
+			{
+				@unlink(DOCROOT.'media'.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR.$filename);
+			}
+
 			$content .= $this->_tag_file(Route::get('media')->uri(array(
 				'environment' => $this->_instance,
 				'file'        => $file,
@@ -225,16 +231,28 @@ class Kohana_Media {
 	 *
 	 * @return string
 	 */
-	public function minify_files()
+	public function minify_files($filename)
 	{
-		$content = '';
+		$files = explode(self::$delimiter, $filename);
 
-		$files   = array_keys($this->_files);
+		if ( ! is_array($files))
+		{
+			$files = array($files);
+		}
 
 		foreach ($files as $file)
 		{
+			$this->add_file($file);
+		}
+
+		$content = '';
+
+		foreach (array_keys($this->_files) as $file)
+		{
 			$content .= $this->_minify_file($file);
 		}
+
+		$this->_save($filename, $content);
 
 		return $content;
 	}
@@ -269,32 +287,22 @@ class Kohana_Media {
 
 	protected function _minify_file($filename)
 	{
-		$original = $this->_config['path'].$filename;
-		$cached   = Kohana::$cache_dir.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR.$filename;
-
-		if ( ! is_file($cached) OR
-			filemtime($cached) < filemtime($original))
-		{
-			if ( ! is_dir(Kohana::$cache_dir.DIRECTORY_SEPARATOR.$this->_instance))
-			{
-				mkdir(Kohana::$cache_dir.DIRECTORY_SEPARATOR.$this->_instance);
-			}
-
-			$content = $this->_minify(file_get_contents($original));
-			$this->_save($cached, $content);
-
-			return $content;
-		}
-
-		return file_get_contents($cached);
+		return $this->_minify(file_get_contents($this->_config['path'].$filename));
 	}
 
 	protected function _save($file, $data)
 	{
 		// If caching is off - don't save minified data
-		if ( ! Kohana::$caching OR ! $this->_config['cache'])
+		if ( ! $this->_config['cache'])
 		{
 			return;
+		}
+
+		$file = DOCROOT.'media'.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR.$file;
+
+		if ( ! is_dir(pathinfo($file, PATHINFO_DIRNAME)))
+		{
+			mkdir(pathinfo($file, PATHINFO_DIRNAME));
 		}
 
 		// Creating empty file if it is not exists

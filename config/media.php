@@ -12,7 +12,7 @@ return array
 		'type'   => 'js',
 		'min'    => TRUE,
 		'merge'  => TRUE,
-		'cache'  => Kohana::$caching
+		'cache'  => TRUE
 	),
 
 	// Css processing
@@ -22,6 +22,6 @@ return array
 		'types'  => 'css',
 		'min'    => TRUE,
 		'merge'  => TRUE,
-		'cache'  => Kohana::$caching
+		'cache'  => TRUE
 	),
 );
