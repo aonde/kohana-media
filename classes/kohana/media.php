@@ -156,10 +156,15 @@ class Kohana_Media {
 
 		if ( (bool) $this->_config['merge'] === TRUE)
 		{
-			$filename = implode(self::$delimiter, array_keys($this->_files));
+			$files = array();
 
-			$files[$filename] = NULL;
-			$this->_mtimes[$filename] = max($this->_mtimes);
+			if (sizeof($this->_files) > 0)
+			{
+				$filename = implode(self::$delimiter, array_keys($this->_files));
+
+				$files[$filename] = NULL;
+				$this->_mtimes[$filename] = max($this->_mtimes);
+			}
 		}
 		else
 		{
@@ -213,7 +218,7 @@ class Kohana_Media {
 	 */
 	public function html()
 	{
-		return $this->html_files().$this->html_source();
+		return (string) $this->html_files().$this->html_source();
 	}
 
 	/**
@@ -336,7 +341,7 @@ class Kohana_Media {
 	{
 		try
 		{
-			$this->html();
+			return $this->html();
 		}
 		catch (Exception $e)
 		{
