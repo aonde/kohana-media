@@ -171,12 +171,14 @@ class Kohana_Media {
 			$files = $this->_files;
 		}
 
+		$path = DOCROOT.'media'.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR;
+
 		foreach ($files as $file => $attributes)
 		{
-			if (is_file(DOCROOT.$file) AND
-				filemtime($file) < $this->_mtimes[$file])
+			if (is_file($path.$file) AND
+				filemtime($path.$file) < $this->_mtimes[$file])
 			{
-				@unlink(DOCROOT.'media'.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR.$filename);
+				@unlink($path.$file);
 			}
 
 			$content .= $this->_tag_file(Route::get('media')->uri(array(
