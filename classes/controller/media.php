@@ -9,7 +9,7 @@ class Controller_Media extends Controller {
 		parent::before();
 
 		// Attach configuration
-		$config = Kohana::config($this->_config);
+		$this->_config = Kohana::config($this->_config);
 	}
 
 	public function action_index($environment)
