@@ -9,9 +9,9 @@ return array
 	'js' => array
 	(
 		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR,
-		'type'   => 'js',
-		'min'    => TRUE,
-		'merge'  => TRUE,
+		'types'  => 'js',
+		'min'    => $production,
+		'merge'  => $production,
 		'cache'  => TRUE
 	),
 
@@ -20,8 +20,8 @@ return array
 	(
 		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR,
 		'types'  => 'css',
-		'min'    => TRUE,
-		'merge'  => TRUE,
+		'min'    => $production,
+		'merge'  => $production,
 		'cache'  => TRUE
 	),
 );
