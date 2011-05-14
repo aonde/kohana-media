@@ -18,6 +18,8 @@ class Media_CSS extends Media {
 
 	protected function _minify($text)
 	{
+		if ($this->_config['min'] == FALSE) return $text;
+
 		if ($this->_cssmin === FALSE)
 		{
 			require_once Kohana::find_file('vendor', 'cssmin/cssmin');

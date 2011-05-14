@@ -18,6 +18,8 @@ class Media_JS extends Media {
 
 	protected function _minify($text)
 	{
+		if ($this->_config['min'] == FALSE) return $text;
+
 		if ($this->_jsmin === FALSE)
 		{
 			require_once Kohana::find_file('vendor', 'jsmin/jsmin');
