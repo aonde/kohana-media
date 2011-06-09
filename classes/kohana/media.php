@@ -104,14 +104,15 @@ class Kohana_Media {
 	/**
 	 * Add static file to minification
 	 *
-	 * @param    string  $file        Filename
-	 * @param    array   $attributes  File attributes
+	 * @param    string   $file          Filename
+	 * @param    array    $attributes    File attributes
+	 * @param    boolean  $force_ignore  If true, the file will not be minimized
 	 * @return   Media
 	 */
-	public function add_file($file, array $attributes = NULL)
+	public function add_file($file, array $attributes = NULL, $force_ignore = FALSE)
 	{
 		// Is it an external static file?
-		if (UTF8::stristr($file, '://'))
+		if (UTF8::stristr($file, '://') OR $force_ignore)
 		{
 			$this->_external[$file] = $attributes;
 
