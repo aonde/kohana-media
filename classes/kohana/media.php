@@ -54,6 +54,12 @@ class Kohana_Media {
 	 */
 	protected $_config;
 
+	// Common priority type constants
+	const PRIORITY_LOW      = 1;
+	const PRIORITY_MEDIUM   = 2;
+	const PRIORITY_HIGH     = 3;
+	const PRIORITY_CRITICAL = 4;
+
 	/**
 	 * Get a singleton Media instance.
 	 *
@@ -105,24 +111,27 @@ class Kohana_Media {
 	 * Add static file to minification
 	 *
 	 * @param    string   $file          Filename
+	 * @param    integer  $priority      Order priority
 	 * @param    array    $attributes    File attributes
-	 * @param    boolean  $force_ignore  If true, the file will not be minimized
 	 * @return   Media
 	 */
-	public function add_file($file, array $attributes = NULL, $force_ignore = FALSE)
+	public function add_file($file, $priority = Media::PRIORITY_MEDIUM, array $attributes = NULL)
 	{
+		$priority = $this->_check_priority($priority);
+
 		// Is it an external static file?
-		if (UTF8::stristr($file, '://') OR $force_ignore)
+		if (strpos($file, '://') !== FALSE)
 		{
-			$this->_external[$file] = $attributes;
+			$this->_external[$priority][$file] = $attributes;
 
 			return $this;
 		}
 
-		if (is_file($this->_config['path'].$file))
+		if (is_file($this->_config['path'].$file) AND // File exist
+			! isset($this->_mtimes[$file]))  // We don't need duplicates
 		{
-			$this->_files[$file]  = $attributes;
-			$this->_mtimes[$file] = filemtime($this->_config['path'].$file);
+			$this->_files[$priority][$file] = $attributes;
+			$this->_mtimes[$file]           = filemtime($this->_config['path'].$file);
 		}
 
 		return $this;
@@ -132,12 +141,15 @@ class Kohana_Media {
 	 * Add inline source
 	 *
 	 * @param    string   $text        Javascript text
+	 * @param    integer  $priority    Order priority
 	 * @param    array    $attributes  Attributes
 	 * @return   Media
 	 */
-	public function add_source($text, array $attributes = NULL)
+	public function add_source($text, $priority = Media::PRIORITY_MEDIUM, array $attributes = NULL)
 	{
-		$this->_source[] = array
+		$priority = $this->_check_priority($priority);
+
+		$this->_source[$priority][] = array
 		(
 			'text'       => $text,
 			'attributes' => $attributes
@@ -155,43 +167,54 @@ class Kohana_Media {
 	{
 		$content = '';
 
-		if ( (bool) $this->_config['merge'] === TRUE)
+		// External files first
+		if (sizeof($this->_external) > 0)
 		{
-			$files = array();
+			arsort($this->_external);
 
-			if (sizeof($this->_files) > 0)
+			$external = call_user_func_array('array_merge', $this->_external);
+
+			foreach ($external as $file => $attributes)
 			{
-				$filename = implode(self::$delimiter, array_keys($this->_files));
-
-				$files[$filename] = NULL;
-				$this->_mtimes[$filename] = max($this->_mtimes);
+				$content .= $this->_tag_file($file, $attributes);
 			}
 		}
-		else
-		{
-			$files = $this->_files;
-		}
 
-		$path = DOCROOT.'media'.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR;
-
-		foreach ($files as $file => $attributes)
+		// Then local files
+		if (sizeof($this->_files) > 0)
 		{
-			if (is_file($path.$file) AND
-				filemtime($path.$file) < $this->_mtimes[$file])
+			arsort($this->_files);
+
+			$files = call_user_func_array('array_merge', $this->_files);
+
+			if ( (bool) $this->_config['merge'] === TRUE)
 			{
-				@unlink($path.$file);
+				if (sizeof($this->_mtimes) > 0)
+				{
+					$files = implode(self::$delimiter, array_keys($files));
+
+					$this->_mtimes[$filename] = max($this->_mtimes);
+
+					$files = array($files => NULL);
+				}
 			}
 
-			$content .= $this->_tag_file(Route::get('media')->uri(array(
-				'environment' => $this->_instance,
-				'file'        => $file,
-				'mtime'       => $this->_mtimes[$file]
-			)), $attributes);
-		}
+			$path = DOCROOT.'media'.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR;
 
-		foreach ($this->_external as $file => $attributes)
-		{
-			$content .= $this->_tag_file($file, $attributes);
+			foreach ($files as $file => $attributes)
+			{
+				if (is_file($path.$file) AND
+					filemtime($path.$file) < $this->_mtimes[$file])
+				{
+					@unlink($path.$file);
+				}
+
+				$content .= $this->_tag_file(Route::get('media')->uri(array(
+					'environment' => $this->_instance,
+					'file'        => $file,
+					'mtime'       => $this->_mtimes[$file]
+				)), $attributes);
+			}
 		}
 
 		return $content;
@@ -204,11 +227,17 @@ class Kohana_Media {
 	 */
 	public function html_source()
 	{
+		if (sizeof($this->_source) == 0) return;
+
 		$content = '';
 
-		foreach ($this->_source as $source)
+		arsort($this->_source);
+
+		$source = call_user_func_array('array_merge', $this->_source);
+
+		foreach ($source as $s)
 		{
-			$content .= $this->_tag_source($this->_minify($source['text'], md5($source['text'])), $source['attributes']);
+			$content .= $this->_tag_source($this->_minify($s['text'], md5($s['text'])), $s['attributes']);
 		}
 
 		return $content;
@@ -221,7 +250,11 @@ class Kohana_Media {
 	 */
 	public function html()
 	{
-		return (string) $this->html_files().$this->html_source();
+		$html = (string) $this->html_files().$this->html_source();
+
+		$this->flush();
+
+		return $html;
 	}
 
 	/**
@@ -278,6 +311,17 @@ class Kohana_Media {
 		return $this->_headers;
 	}
 
+	/**
+	 * Flushes files- and source array
+	 *
+	 * @return void
+	 */
+	public function flush()
+	{
+		$this->_files  = array();
+		$this->_source = array();
+	}
+
 	protected function _tag_file($filename, array $attributes = NULL)
 	{
 		return $filename;
@@ -296,6 +340,11 @@ class Kohana_Media {
 	protected function _minify_file($filename)
 	{
 		return $this->_minify(file_get_contents($this->_config['path'].$filename));
+	}
+
+	protected function _check_priority($priority)
+	{
+		return (in_array( (int) $priority, array(1, 2, 3, 4))) ? $priority : 2;
 	}
 
 	protected function _save($file, $data)
