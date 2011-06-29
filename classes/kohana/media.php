@@ -286,9 +286,16 @@ class Kohana_Media {
 			$this->add_file($file);
 		}
 
+		if (sizeof($this->_files) == 0)
+		{
+			return;
+		}
+
 		$content = '';
 
-		foreach (array_keys($this->_files) as $file)
+		$files = call_user_func_array('array_merge', $this->_files);
+
+		foreach (array_keys($files) as $file)
 		{
 			$content .= $this->_minify_file($file);
 		}
