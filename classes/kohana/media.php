@@ -187,13 +187,13 @@ class Kohana_Media {
 
 			$files = call_user_func_array('array_merge', $this->_files);
 
-			if ( (bool) $this->_config['merge'] === TRUE)
+			if ($this->_config['merge'] === TRUE)
 			{
 				if (sizeof($this->_mtimes) > 0)
 				{
 					$files = implode(self::$delimiter, array_keys($files));
 
-					$this->_mtimes[$filename] = max($this->_mtimes);
+					$this->_mtimes[$files] = max($this->_mtimes);
 
 					$files = array($files => NULL);
 				}
