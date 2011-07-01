@@ -170,7 +170,7 @@ class Kohana_Media {
 		// External files first
 		if (sizeof($this->_external) > 0)
 		{
-			arsort($this->_external);
+			sort($this->_external);
 
 			$external = call_user_func_array('array_merge', $this->_external);
 
@@ -183,7 +183,7 @@ class Kohana_Media {
 		// Then local files
 		if (sizeof($this->_files) > 0)
 		{
-			arsort($this->_files);
+			sort($this->_files);
 
 			$files = call_user_func_array('array_merge', $this->_files);
 
@@ -231,7 +231,7 @@ class Kohana_Media {
 
 		$content = '';
 
-		arsort($this->_source);
+		sort($this->_source);
 
 		$source = call_user_func_array('array_merge', $this->_source);
 
