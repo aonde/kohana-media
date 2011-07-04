@@ -55,10 +55,10 @@ class Kohana_Media {
 	protected $_config;
 
 	// Common priority type constants
-	const PRIORITY_LOW      = 1;
-	const PRIORITY_MEDIUM   = 2;
-	const PRIORITY_HIGH     = 3;
-	const PRIORITY_CRITICAL = 4;
+	const PRIORITY_LOW      = 4;
+	const PRIORITY_MEDIUM   = 3;
+	const PRIORITY_HIGH     = 2;
+	const PRIORITY_CRITICAL = 1;
 
 	/**
 	 * Get a singleton Media instance.
@@ -170,7 +170,7 @@ class Kohana_Media {
 		// External files first
 		if (sizeof($this->_external) > 0)
 		{
-			sort($this->_external);
+			ksort($this->_external, SORT_NUMERIC);
 
 			$external = call_user_func_array('array_merge', $this->_external);
 
@@ -183,7 +183,7 @@ class Kohana_Media {
 		// Then local files
 		if (sizeof($this->_files) > 0)
 		{
-			sort($this->_files);
+			ksort($this->_files, SORT_NUMERIC);
 
 			$files = call_user_func_array('array_merge', $this->_files);
 
@@ -231,7 +231,7 @@ class Kohana_Media {
 
 		$content = '';
 
-		sort($this->_source);
+		ksort($this->_source, SORT_NUMERIC);
 
 		$source = call_user_func_array('array_merge', $this->_source);
 
