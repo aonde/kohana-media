@@ -9,11 +9,14 @@ class Controller_Media extends Controller {
 		parent::before();
 
 		// Attach configuration
-		$this->_config = Kohana::config($this->_config);
+		$this->_config = Kohana::$config->load($this->_config)->as_array();
 	}
 
-	public function action_index($environment)
+	public function action_index()
 	{
+		// Get environment
+		$environment = $this->request->param('environment');
+
 		// Get the file path from the request
 		$file = $this->request->param('file');
 
