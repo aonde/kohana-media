@@ -70,7 +70,10 @@ class Kohana_Media {
 	 */
 	public static function instance($name)
 	{
-		$config = Kohana::config('media');
+		$config = new Config;
+		$config->attach(new Config_File);
+
+		$config = $config->load('media')->as_array();
 
 		if ( ! isset($config[$name]))
 		{
