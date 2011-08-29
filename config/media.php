@@ -5,23 +5,42 @@ $production = (Kohana::$environment === Kohana::PRODUCTION);
 
 return array
 (
-	// Javascript processing
-	'js' => array
+	/**
+	 * File caching flag
+	 */
+	'cache' => $production,
+
+	 /**
+	 * File merging flag
+	 */
+	'merge' => $production,
+
+	 /**
+	 * Delimiter
+	 */
+	'delimiter' => '--',
+
+	 /**
+	 * File filters (for example - minimizing)
+	 */
+	'filters' => array
 	(
-		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR,
-		'types'  => 'js',
-		'min'    => $production,
-		'merge'  => $production,
-		'cache'  => TRUE
+		'js'  => array('jsmin'),
+		'css' => array('cssmin')
 	),
 
-	// Css processing
-	'css' => array
-	(
-		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR,
-		'types'  => 'css',
-		'min'    => $production,
-		'merge'  => $production,
-		'cache'  => TRUE
-	),
+	 /**
+	 * Located in DOCROOT
+	 */
+	'public_directory' => 'media',
+
+	 /**
+	 * Located in APPPATH (or in modules)
+	 */
+	'media_directory' => 'media',
+
+	/**
+	 * Maximal URL length
+	 */
+	'url_maxlength' => 256
 );
