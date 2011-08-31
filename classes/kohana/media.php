@@ -147,6 +147,11 @@ class Kohana_Media {
 		return $this;
 	}
 
+	/**
+	 * Cleans all data
+	 *
+	 * @return Media
+	 */
 	public function clean()
 	{
 		$this->_files =
@@ -157,6 +162,11 @@ class Kohana_Media {
 		return $this;
 	}
 
+	/**
+	 * Renders data
+	 *
+	 * @return string
+	 */
 	public function html()
 	{
 		$content = '';
@@ -165,6 +175,8 @@ class Kohana_Media {
 
 		if (sizeof($this->_externals) > 0)
 		{
+			ksort($this->_externals, SORT_NUMERIC);
+
 			$this->_externals = call_user_func_array('array_merge', $this->_externals);
 
 			$content .= call_user_func($processor.'::externals', $this->_externals);
@@ -172,6 +184,8 @@ class Kohana_Media {
 
 		if (sizeof($this->_files) > 0)
 		{
+			ksort($this->_files, SORT_NUMERIC);
+
 			$this->_files = call_user_func_array('array_merge', $this->_files);
 
 			$content .= call_user_func_array($processor.'::files', array($this->_files, $this->_mtimes));
@@ -179,6 +193,8 @@ class Kohana_Media {
 
 		if (sizeof($this->_source) > 0)
 		{
+			ksort($this->_source, SORT_NUMERIC);
+
 			$this->_source = call_user_func_array('array_merge', $this->_source);
 
 			$content .= call_user_func($processor.'::source', $this->_source);
