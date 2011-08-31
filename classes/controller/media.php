@@ -67,56 +67,6 @@ class Controller_Media extends Controller {
 			->body($source);
 	}
 
-	/**
-	 * Is JSmin loaded?
-	 *
-	 * @var boolean
-	 */
-	protected $_jsmin = FALSE;
-
-	/**
-	 * Minify JS source
-	 *
-	 * @param   string  $source  JS source
-	 * @return  string  Minified source
-	 */
-	public function filter_jsmin($source)
-	{
-		if ( ! $this->_jsmin)
-		{
-			require_once Kohana::find_file('vendor', 'jsmin/cssmin');
-
-			$this->_jsmin = TRUE;
-		}
-
-		return JSMin::minify($source);
-	}
-
-	/**
-	 * Is CSSmin loaded?
-	 *
-	 * @var boolean
-	 */
-	protected $_cssmin = FALSE;
-
-	/**
-	 * Minify CSS source
-	 *
-	 * @param   string  $source  CSS source
-	 * @return  string  Minified source
-	 */
-	public function filter_cssmin($source)
-	{
-		if ( ! $this->_cssmin)
-		{
-			require_once Kohana::find_file('vendor', 'cssmin/cssmin');
-
-			$this->_cssmin = TRUE;
-		}
-
-		return CssMin::minify($source);
-	}
-
 	protected function _minify($filename)
 	{
 		$source   = file_get_contents($filename);
@@ -127,11 +77,11 @@ class Controller_Media extends Controller {
 		{
 			foreach($this->_config['filters'][$extension] as $filter)
 			{
-				$filter = 'filter_'.$filter;
+				$filter = 'Media_'.$filter;
 
-				if (method_exists($this, $filter))
+				if(class_exists($filter))
 				{
-					$source = call_user_func(array($this, $filter), $source);
+					$source = call_user_func($filter.'::filter', $source);
 				}
 			}
 		}
@@ -162,4 +112,5 @@ class Controller_Media extends Controller {
 			}
 		}
 	}
+
 } // End Controller_Media

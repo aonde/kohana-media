@@ -25,8 +25,8 @@ return array
 	 */
 	'filters' => array
 	(
-		'js'  => array('jsmin'),
-		'css' => array('cssmin')
+		'js'  => array('js'),
+		'css' => array('css')
 	),
 
 	 /**
