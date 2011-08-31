@@ -171,6 +171,61 @@ class Kohana_Media {
 	}
 
 	/**
+	 * Cleans all generated media files
+	 *
+	 * @param   string  $directory  Directory to clean
+	 * @return  array   Information about removed files and directories
+	 */
+	public static function erase()
+	{
+		$directory = DOCROOT.Kohana::$config->load('media')->public_directory;
+		$args      = func_get_args();
+
+		if ( ! isset($args[0]))
+		{
+			$directories = Kohana::list_files(Kohana::$config->load('media')->public_directory, array(DOCROOT));
+		}
+		else
+		{
+			$directories = $args[0];
+		}
+
+		$dirs = $files = $size = 0;
+
+		foreach ($directories as $key => $val)
+		{
+			$current = DOCROOT.$key;
+
+			if (is_array($val))
+			{
+				$dirs++;
+
+				list($sub_dirs, $sub_files, $sub_size) = self::erase($val);
+
+				$dirs  += $sub_dirs;
+				$files += $sub_files;
+				$size  += $sub_size;
+
+				rmdir($current);
+			}
+			else
+			{
+				$files++;
+				$size += filesize($val);
+
+				unlink($val);
+			}
+		}
+
+		return array
+		(
+			$dirs,
+			$files,
+			$size
+		);
+	}
+
+	/**
 	 * Renders data
 	 *
 	 * @return string
