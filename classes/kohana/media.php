@@ -117,9 +117,11 @@ class Kohana_Media {
 			return $this;
 		}
 
+		$exist = is_file($this->_path.$filename);
+
 		if ( ! $force)
 		{
-			if ( ! is_file($this->_path.$filename) OR
+			if ( ! $exist OR
 				pathinfo($filename, PATHINFO_EXTENSION) != $this->_instance)
 			{
 				return $this;
@@ -127,7 +129,7 @@ class Kohana_Media {
 		}
 
 		$this->_files[ (int) $priority][] = $filename;
-		$this->_mtimes[$filename]         = (is_file($this->_path.$filename)) ? filemtime($this->_path.$filename) : FALSE;
+		$this->_mtimes[$filename]         = ($exist) ? filemtime($this->_path.$filename) : FALSE;
 
 		return $this;
 	}
