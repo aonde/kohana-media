@@ -101,9 +101,10 @@ class Kohana_Media {
 	 *
 	 * @param    string   $file       Filename
 	 * @param    integer  $priority   Order priority
+	 * @param    boolean  $force      Force add file (without checking for the existence of)
 	 * @return   Media
 	 */
-	public function add_file($filename, $priority = Media::PRIORITY_MEDIUM)
+	public function add_file($filename, $priority = Media::PRIORITY_MEDIUM, $force = FALSE)
 	{
 		// Who knows
 		$filename = $this->_clean_filename($filename);
@@ -116,12 +117,17 @@ class Kohana_Media {
 			return $this;
 		}
 
-		if (is_file($this->_path.$filename) AND
-			pathinfo($filename, PATHINFO_EXTENSION) == $this->_instance)
+		if ( ! $force)
 		{
-			$this->_files[ (int) $priority][] = $filename;
-			$this->_mtimes[$filename]         = filemtime($this->_path.$filename);
+			if ( ! is_file($this->_path.$filename) OR
+				pathinfo($filename, PATHINFO_EXTENSION) != $this->_instance)
+			{
+				return $this;
+			}
 		}
+
+		$this->_files[ (int) $priority][] = $filename;
+		$this->_mtimes[$filename]         = (is_file($this->_path.$filename)) ? filemtime($this->_path.$filename) : FALSE;
 
 		return $this;
 	}
