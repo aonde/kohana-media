@@ -24,7 +24,7 @@ class Kohana_Controller_Media extends Controller {
 		$this->_config = Kohana::$config->load($this->_config)
 			->as_array();
 
-		$this->_file = str_replace('..', '', $this->request->param('file'));
+		$this->_file = $this->request->param('file');
 		$action = explode('/', $this->_file);
 
 		if (is_array($action))
@@ -40,20 +40,36 @@ class Kohana_Controller_Media extends Controller {
 
 	public function action_plain()
 	{
-		$files = explode($this->_config['delimiter'], $this->_file);
+		$files   = explode($this->_config['delimiter'], $this->_file);
+
+		$sources = array();
+
+		foreach($files as $file)
+		{
+			if ($file = $this->_check_path($file))
+			{
+				if ( ! in_array($file, $sources))
+				{
+					$sources[] = $file;
+				}
+			}
+		}
+
+		$this->_source($sources);
+	}
+
+	protected function _source($files)
+	{
+		if (sizeof($files) == 0)
+		{
+			return $this->response
+				->status(404);
+		}
 
 		$source = '';
 
 		foreach($files as $file)
 		{
-			$file = APPPATH.$this->_config['media_directory'].DIRECTORY_SEPARATOR.$file;
-
-			if ( ! file_exists($file))
-			{
-				return $this->response
-					->status(404);
-			}
-
 			$source .= $this->_minify($file);
 		}
 
@@ -67,9 +83,71 @@ class Kohana_Controller_Media extends Controller {
 			->body($source);
 	}
 
+	/**
+	 * Directories array to find static media files
+	 *
+	 * @var array
+	 */
+	protected $_paths = FALSE;
+
+	protected function _init_paths()
+	{
+		if (is_array($this->_paths))
+		{
+			return;
+		}
+
+		$this->_paths = array();
+
+		$this->_add_path($this->_config['media_directory']);
+	}
+
+	protected function _add_path($path)
+	{
+		if ( ! $this->_paths)
+		{
+			$this->_init_paths();
+		}
+
+		$this->_paths[] = $path;
+	}
+
+	protected function _check_path($filename)
+	{
+		if ( ! $this->_paths)
+		{
+			$this->_init_paths();
+		}
+
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+		if (in_array($ext, $this->_config['warn_extensions']))
+		{
+			return FALSE;
+		}
+
+		foreach($this->_paths as $path)
+		{
+			foreach(Kohana::include_paths() as $include_path)
+			{
+				$dir = realpath($include_path.DIRECTORY_SEPARATOR.$path);
+
+				if ($dir)
+				{
+					if (strpos($file = realpath($dir.DIRECTORY_SEPARATOR.$filename), $dir) === 0 AND is_file($file))
+					{
+						return $file;
+					}
+				}
+			}
+		}
+
+		return FALSE;
+	}
+
 	protected function _minify($filename)
 	{
-		$source   = file_get_contents($filename);
+		$source = file_get_contents($filename);
 
 		$extension = pathinfo($filename, PATHINFO_EXTENSION);
 

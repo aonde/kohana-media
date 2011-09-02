@@ -29,13 +29,13 @@ return array
 		'css' => array('css')
 	),
 
-	 /**
-	 * Located in DOCROOT
-	 */
-	'public_directory' => 'media',
+	'warn_extensions' => array
+	(
+		'php', 'htaccess'
+	),
 
-	 /**
-	 * Located in APPPATH (or in modules)
+	/**
+	 * Directory to store media files
 	 */
 	'media_directory' => 'media',
 
