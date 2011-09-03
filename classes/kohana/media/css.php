@@ -48,18 +48,18 @@ class Kohana_Media_Css implements Kohana_Media_Interface {
 	public static function files(array $files, array $mtimes)
 	{
 		$delimiter        = Kohana::$config->load('media')->delimiter;
-		$public_directory = DOCROOT.Kohana::$config->load('media')->public_directory.DIRECTORY_SEPARATOR;
+		$media_directory = DOCROOT.Kohana::$config->load('media')->media_directory.DIRECTORY_SEPARATOR;
 
 		if (Kohana::$config->load('media')->merge)
 		{
 			$file  = implode($delimiter, $files);
 			$mtime = max($mtimes);
 
-			if (is_file($public_directory.$file))
+			if (is_file($media_directory.$file))
 			{
-				if (filemtime($public_directory.$file) < $mtime)
+				if (filemtime($media_directory.$file) < $mtime)
 				{
-					unlink($public_directory.$file);
+					unlink($media_directory.$file);
 				}
 			}
 
@@ -72,11 +72,11 @@ class Kohana_Media_Css implements Kohana_Media_Interface {
 		{
 			$mtime = $mtimes[$file];
 
-			if (is_file($public_directory.$file))
+			if (is_file($media_directory.$file))
 			{
-				if (filemtime($public_directory.$file) < $mtime)
+				if (filemtime($media_directory.$file) < $mtime)
 				{
-					unlink($public_directory.$file);
+					unlink($media_directory.$file);
 				}
 			}
 

@@ -15,6 +15,8 @@ return array
 	 */
 	'merge' => $production,
 
+	'debug' => ! $production,
+
 	 /**
 	 * Delimiter
 	 */

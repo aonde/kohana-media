@@ -58,7 +58,7 @@ class Kohana_Controller_Media extends Controller {
 		$this->_source($sources);
 	}
 
-	protected function _source($files)
+	protected function _source(array $files, $optional_content = NULL)
 	{
 		if (sizeof($files) == 0)
 		{
@@ -80,7 +80,7 @@ class Kohana_Controller_Media extends Controller {
 
 		$this->response
 			->headers('content-type', File::mime_by_ext(pathinfo($this->_file, PATHINFO_EXTENSION)))
-			->body($source);
+			->body($optional_content.$source);
 	}
 
 	/**
@@ -110,6 +110,8 @@ class Kohana_Controller_Media extends Controller {
 		}
 
 		$this->_paths[] = $path;
+
+		return $this;
 	}
 
 	protected function _check_path($filename)
@@ -162,6 +164,11 @@ class Kohana_Controller_Media extends Controller {
 					$source = call_user_func($filter.'::filter', $source);
 				}
 			}
+		}
+
+		if ($this->_config['debug'] AND in_array($extension, $this->_config['filters']))
+		{
+			return "\n\n/* ".$filename." */\n\n".$source."\n\n";
 		}
 
 		return $source;
