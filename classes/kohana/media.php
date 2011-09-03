@@ -99,13 +99,23 @@ class Kohana_Media {
 	/**
 	 * Add static file to minify
 	 *
-	 * @param    string   $file       Filename
+	 * @param    mixed    $file       Filename or array of files
 	 * @param    integer  $priority   Order priority
 	 * @param    boolean  $force      Force add file (without checking for the existence of)
 	 * @return   Media
 	 */
 	public function add_file($filename, $priority = Media::PRIORITY_MEDIUM, $force = FALSE)
 	{
+		if (is_array($filename))
+		{
+			foreach($filename as $file)
+			{
+				$this->add_file($file, $priority, $force);
+			}
+
+			return $this;
+		}
+
 		// Who knows
 		$filename = $this->_clean_filename($filename);
 
