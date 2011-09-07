@@ -178,14 +178,14 @@ class Kohana_Controller_Media extends Controller {
 	{
 		$this->_make_directory(pathinfo($file, PATHINFO_DIRNAME));
 
-		file_put_contents(DOCROOT.$this->_config['public_directory'].DIRECTORY_SEPARATOR.$file, $source);
+		file_put_contents(DOCROOT.$this->_config['media_directory'].DIRECTORY_SEPARATOR.$file, $source);
 	}
 
 	protected function _make_directory($dirname)
 	{
 		$dirs = explode('/', $dirname);
 
-		$path = DOCROOT.$this->_config['public_directory'];
+		$path = DOCROOT.$this->_config['media_directory'];
 
 		foreach($dirs as $dir)
 		{

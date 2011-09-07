@@ -64,7 +64,7 @@ class Kohana_Media {
 		$this->_config   = $config;
 		$this->_instance = $instance;
 
-		$this->_path     = APPPATH.$config['media_directory'].DIRECTORY_SEPARATOR;
+		$this->_path     = $config['media_directory'].DIRECTORY_SEPARATOR;
 	}
 
 	/**
@@ -127,19 +127,20 @@ class Kohana_Media {
 			return $this;
 		}
 
-		$exist = is_file($this->_path.$filename);
+		$info = pathinfo($this->_path.$filename);
+		$file = Kohana::find_file($info['dirname'], $info['filename'], $info['extension']);
 
 		if ( ! $force)
 		{
-			if ( ! $exist OR
-				pathinfo($filename, PATHINFO_EXTENSION) != $this->_instance)
+			if ( ! $file OR
+				$info['extension'] != $this->_instance)
 			{
 				return $this;
 			}
 		}
 
 		$this->_files[ (int) $priority][] = $filename;
-		$this->_mtimes[$filename]         = ($exist) ? filemtime($this->_path.$filename) : FALSE;
+		$this->_mtimes[$filename]         = filemtime($file);
 
 		return $this;
 	}
