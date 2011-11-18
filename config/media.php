@@ -27,8 +27,8 @@ return array
 	 */
 	'filters' => array
 	(
-		'js'  => array('js'),
-		'css' => array('css')
+		'js'  => array(),
+		'css' => array()
 	),
 
 	'warn_extensions' => array
