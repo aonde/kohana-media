@@ -5,44 +5,23 @@ $production = (Kohana::$environment === Kohana::PRODUCTION);
 
 return array
 (
-	/**
-	 * File caching flag
-	 */
-	'cache' => $production,
-
-	 /**
-	 * File merging flag
-	 */
-	'merge' => $production,
-
-	'debug' => ! $production,
-
-	 /**
-	 * Delimiter
-	 */
-	'delimiter' => '--',
-
-	 /**
-	 * File filters (for example - minimizing)
-	 */
-	'filters' => array
+	// Javascript processing
+	'js' => array
 	(
-		'js'  => array(),
-		'css' => array()
+		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR,
+		'types'  => 'js',
+		'min'    => $production,
+		'merge'  => $production,
+		'cache'  => TRUE
 	),
 
-	'warn_extensions' => array
+	// Css processing
+	'css' => array
 	(
-		'php', 'htaccess'
+		'path'   => APPPATH.'media'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR,
+		'types'  => 'css',
+		'min'    => $production,
+		'merge'  => $production,
+		'cache'  => TRUE
 	),
-
-	/**
-	 * Directory to store media files
-	 */
-	'media_directory' => 'media',
-
-	/**
-	 * Maximal URL length
-	 */
-	'url_maxlength' => 256
 );
