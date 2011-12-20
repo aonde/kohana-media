@@ -299,7 +299,10 @@ class Kohana_Media {
 		{
 			$content .= $this->_minify_file($file);
 		}
-
+        
+        // This change is necessary to use our image server.
+        $content = str_replace('[PATH_IMAGES]', Kohana::$config->load('site')->path_images, $content);
+        
 		$this->_save($filename, $content);
 
 		return $content;
