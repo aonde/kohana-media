@@ -206,17 +206,18 @@ class Kohana_Media {
 				if (is_file($path.$file) AND
 					filemtime($path.$file) < $this->_mtimes[$file])
 				{
-					@unlink($path.$file);
+					@unlink($path.md5($file).'.'.pathinfo($file, PATHINFO_EXTENSION));
 				}
-
+				//PATHINFO_FILENAME
 				$content .= $this->_tag_file(Route::get('media')->uri(array(
 					'environment' => $this->_instance,
-					'file'        => $file,
+					'file'        => (Kohana::$environment === Kohana::PRODUCTION ? md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION) : $file),
 					'mtime'       => $this->_mtimes[$file]
 				)), $attributes);
 			}
 		}
-
+		if (Kohana::$environment === Kohana::PRODUCTION)
+			$this->minify_files($file);
 		return $content;
 	}
 
@@ -303,8 +304,8 @@ class Kohana_Media {
         // This change is necessary to use our image server.
         $content = str_replace('[PATH_IMAGES]', Kohana::$config->load('site')->path_images, $content);
         
-		$this->_save($filename, $content);
-
+		$this->_save(md5(pathinfo($filename, PATHINFO_FILENAME)).'.'.pathinfo($filename, PATHINFO_EXTENSION), $content);
+		//die($content); 
 		return $content;
 	}
 
@@ -364,7 +365,10 @@ class Kohana_Media {
 		{
 			return;
 		}
+		
 
+		//$file = md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION);
+		//die($file);
 		$file = DOCROOT.'media'.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR.$file;
 
 		if ( ! is_dir(pathinfo($file, PATHINFO_DIRNAME)))
