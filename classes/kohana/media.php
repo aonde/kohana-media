@@ -192,33 +192,45 @@ class Kohana_Media {
 				if (sizeof($this->_mtimes) > 0)
 				{
 					$files = implode(self::$delimiter, array_keys($files));
+					
+					$files_key = md5(pathinfo($files, PATHINFO_FILENAME)).'.'.pathinfo($files, PATHINFO_EXTENSION);
+					$this->_mtimes[$files_key] = max($this->_mtimes);
 
-					$this->_mtimes[$files] = max($this->_mtimes);
-
-					$files = array($files => NULL);
+					$files = array($files_key => NULL);
 				}
 			}
+
 
 			$path = DOCROOT.'media'.DIRECTORY_SEPARATOR.$this->_instance.DIRECTORY_SEPARATOR;
 
 			foreach ($files as $file => $attributes)
 			{
-				if (is_file($path.$file) AND
-					filemtime($path.$file) < $this->_mtimes[$file])
+				//var_dump($file);
+				//var_dump(md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION));
+				$mtimes_key = $file;
+				//var_dump($mtimes_key);
+				//die('by');
+				if (is_file($path.md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION)) AND
+					filemtime($path.md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION)) < $this->_mtimes[$mtimes_key])
 				{
-					@unlink($path.md5($file).'.'.pathinfo($file, PATHINFO_EXTENSION));
+					@unlink($path.md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION));
 				}
 				//PATHINFO_FILENAME
+				//var_dump($this->_mtimes);
+				//var_dump($file);
+				//var_dump($mtimes_key);
+				//echo md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION);
+			//die('fim')			;
 				$content .= $this->_tag_file(Route::get('media')->uri(array(
 					'environment' => $this->_instance,
-					'file'        => $file,
-					'mtime'       => $this->_mtimes[$file]
+					'file'        => (Kohana::$environment === Kohana::PRODUCTION ? md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION) : $file),
+					'mtime'       => $this->_mtimes[$mtimes_key],
 				)), $attributes);
-				//'file'        => (Kohana::$environment === Kohana::PRODUCTION ? md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION) : $file),
+				
 			}
 		}
-		//if (Kohana::$environment === Kohana::PRODUCTION)
-		//	$this->minify_files($file);
+		if (Kohana::$environment === Kohana::PRODUCTION and !is_file($path.md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION)))
+			$this->minify_files($file);
 		return $content;
 	}
 
