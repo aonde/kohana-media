@@ -211,12 +211,12 @@ class Kohana_Media {
 				//PATHINFO_FILENAME
 				$content .= $this->_tag_file(Route::get('media')->uri(array(
 					'environment' => $this->_instance,
-					'file'        => (Kohana::$environment === Kohana::PRODUCTION ? md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION) : $file),
+					'file'        => (Kohana::$environment === Kohana::PRODUCTIONABC ? md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION) : $file),
 					'mtime'       => $this->_mtimes[$file]
 				)), $attributes);
 			}
 		}
-		if (Kohana::$environment === Kohana::PRODUCTION)
+		if (Kohana::$environment === Kohana::PRODUCTIONABC)
 			$this->minify_files($file);
 		return $content;
 	}
