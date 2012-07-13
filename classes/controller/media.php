@@ -47,7 +47,8 @@ class Controller_Media extends Controller {
 		$this->response->headers('content-type', File::mime_by_ext($extension));
 
 		// Send the file content as the response
-		if (Kohana::$environment !== Kohana::PRODUCTIONABC) $this->response->body($media->minify_files($file));
+		//if (Kohana::$environment !== Kohana::PRODUCTION) $this->response->body($media->minify_files($file));
+		$this->response->body($media->minify_files($file));
 	}
 
 } // End Controller_Media
