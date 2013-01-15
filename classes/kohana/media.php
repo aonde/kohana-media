@@ -229,7 +229,7 @@ class Kohana_Media {
 				
 			}
 		}
-		if (Kohana::$environment === Kohana::PRODUCTION and !is_file($path.md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION)))
+		if (isset($file)  and Kohana::$environment === Kohana::PRODUCTION and !is_file($path.md5(pathinfo($file, PATHINFO_FILENAME)).'.'.pathinfo($file, PATHINFO_EXTENSION)))
 			$this->minify_files($file);
 		return $content;
 	}
